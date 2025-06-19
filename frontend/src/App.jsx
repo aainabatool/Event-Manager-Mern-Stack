@@ -1,45 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react-router-dom';
 import EventList from './components/EventList';
 import EventForm from './components/EventForm';
 import Login from './components/Login';
+import { AuthContext } from './contexts/AuthContext';
+import './App.css'; // Custom styles
 
 function App() {
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
-  const isAuthenticated = !!localStorage.getItem('access_token');
+  const { isAuthenticated, logout } = useContext(AuthContext); // 👈 Use context
 
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    window.location.href = '/login';
-  };
-
-  // 👇 Nested component to access hooks like useLocation
   const AppContent = () => {
     const location = useLocation();
-
     const showFilterSearch = location.pathname === '/' || location.pathname === '/past';
 
     return (
       <>
-        {/* Navigation */}
-        <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        {/* Navbar */}
+        <nav className="navbar navbar-expand-lg navbar-dark modern-navbar shadow-lg py-3">
           <div className="container-fluid">
-            <Link className="navbar-brand fw-bold fs-4" to="/">📅 Event Manager</Link>
+            <Link className="navbar-brand fs-3 fw-bold" to="/">🎯 Evently</Link>
             <button
               className="navbar-toggler"
               type="button"
               data-bs-toggle="collapse"
               data-bs-target="#navbarNav"
-              aria-controls="navbarNav"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
             >
               <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse" id="navbarNav">
-              <ul className="navbar-nav ms-auto">
+              <ul className="navbar-nav ms-auto gap-2 align-items-center">
                 <li className="nav-item">
                   <Link className="nav-link" to="/">Upcoming</Link>
                 </li>
@@ -48,12 +39,18 @@ function App() {
                 </li>
                 {isAuthenticated && (
                   <li className="nav-item">
-                    <Link className="nav-link" to="/add">Add Event</Link>
+                    <Link className="nav-link" to="/add">Add</Link>
                   </li>
                 )}
                 <li className="nav-item">
                   {isAuthenticated ? (
-                    <button className="btn btn-outline-light btn-sm ms-2" onClick={handleLogout}>
+                    <button
+                      className="btn btn-outline-light ms-2 scale-hover"
+                      onClick={() => {
+                        logout(); // 👈 Calls context logout
+                        window.location.href = '/login';
+                      }}
+                    >
                       Logout
                     </button>
                   ) : (
@@ -67,10 +64,10 @@ function App() {
 
         {/* Filter/Search Bar */}
         {showFilterSearch && (
-          <div className="container mt-4">
-            <div className="row g-3 align-items-center">
+          <div className="container mt-4 fade-in">
+            <div className="row g-3 align-items-center glass-panel p-3 rounded-4 shadow">
               <div className="col-md-4">
-                <label htmlFor="filter" className="form-label fw-semibold">Filter by:</label>
+                <label htmlFor="filter" className="form-label fw-semibold text-white">Filter by:</label>
                 <select
                   id="filter"
                   className="form-select shadow-sm"
@@ -78,17 +75,17 @@ function App() {
                   onChange={(e) => setFilter(e.target.value)}
                 >
                   <option value="all">All Events</option>
-                  <option value="upcoming">Upcoming Events</option>
-                  <option value="past">Past Events</option>
+                  <option value="upcoming">Upcoming</option>
+                  <option value="past">Past</option>
                 </select>
               </div>
               <div className="col-md-8">
-                <label htmlFor="search" className="form-label fw-semibold">Search:</label>
+                <label htmlFor="search" className="form-label fw-semibold text-white">Search:</label>
                 <input
                   type="text"
                   id="search"
                   className="form-control shadow-sm"
-                  placeholder="Search events by name, date, or location..."
+                  placeholder="Search events..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -98,7 +95,7 @@ function App() {
         )}
 
         {/* Main Content */}
-        <div className="container my-4 flex-grow-1">
+        <div className="container my-5 fade-in">
           <Routes>
             <Route path="/" element={<EventList filter={filter} search={search} />} />
             <Route path="/past" element={<EventList filter="past" search={search} />} />
@@ -109,8 +106,8 @@ function App() {
         </div>
 
         {/* Footer */}
-        <footer className="bg-light text-center py-3 mt-auto">
-          <small>&copy; {new Date().getFullYear()} Event Manager App</small>
+        <footer className="text-center py-3 modern-footer mt-auto">
+          <small>&copy; {new Date().getFullYear()} Evently</small>
         </footer>
       </>
     );
@@ -118,7 +115,7 @@ function App() {
 
   return (
     <Router>
-      <div className="min-vh-100 d-flex flex-column">
+      <div className="min-vh-100 d-flex flex-column bg-gradient-custom text-light">
         <AppContent />
       </div>
     </Router>

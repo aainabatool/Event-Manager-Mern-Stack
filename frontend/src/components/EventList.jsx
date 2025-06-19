@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DeleteModal from './DeleteModal';
+import './EventList.css'; // 🔥 custom styling for this component
 
 const EventList = ({ filter, search }) => {
   const [events, setEvents] = useState([]);
@@ -42,36 +43,32 @@ const EventList = ({ filter, search }) => {
 
   return (
     <div className="container py-5">
-      <h2 className="mb-4 text-primary fw-bold text-center">Event Listings</h2>
-      <div className="row">
+      <h2 className="text-center mb-5 fw-bold text-white fade-in">✨ Event Listings</h2>
+      <div className="row g-4">
         {events.map((event) => (
-          <div key={event.id} className="col-md-6 col-lg-4 mb-4">
-            <div className="card shadow-sm h-100 border-0 rounded-4">
-              <div className="card-body">
-                <h5 className="card-title fw-semibold">{event.name}</h5>
-                <p className="card-text text-muted"><strong>Date:</strong> {event.date}</p>
-                <p className="card-text text-muted"><strong>Time:</strong> {event.time}</p>
-                <p className="card-text text-muted"><strong>Location:</strong> {event.location}</p>
-                <p className="card-text">{event.description}</p>
+          <div key={event.id} className="col-md-6 col-lg-4 fade-in-up">
+            <div className="glass-card h-100 p-4 shadow-lg rounded-4 d-flex flex-column justify-content-between">
+              <div>
+                <h5 className="fw-bold text-white mb-3">{event.name}</h5>
+                <p className="mb-1 text-light"><strong>Date:</strong> {event.date}</p>
+                <p className="mb-1 text-light"><strong>Time:</strong> {event.time}</p>
+                <p className="mb-1 text-light"><strong>Location:</strong> {event.location}</p>
+                <p className="text-light">{event.description}</p>
                 {event.due_date && (
-                  <p className="card-text text-muted">
-                    <strong>Due Date:</strong> {event.due_date}
-                  </p>
+                  <p className="mb-1 text-light"><strong>Due Date:</strong> {event.due_date}</p>
                 )}
-                <p className="card-text text-muted">
-                  <strong>Reminder:</strong> {event.reminder ? 'Yes' : 'No'}
-                </p>
+                <p className="mb-0 text-light"><strong>Reminder:</strong> {event.reminder ? 'Yes' : 'No'}</p>
               </div>
               {isAuthenticated && (
-                <div className="card-footer bg-white border-0 d-flex justify-content-between">
+                <div className="d-flex justify-content-between mt-4">
                   <button
-                    className="btn btn-outline-primary rounded-pill px-3"
+                    className="btn btn-outline-light scale-hover rounded-pill px-4"
                     onClick={() => window.location.href = `/edit/${event.id}`}
                   >
                     Edit
                   </button>
                   <button
-                    className="btn btn-outline-danger rounded-pill px-3"
+                    className="btn btn-outline-danger scale-hover rounded-pill px-4"
                     onClick={() => {
                       setEventToDelete(event.id);
                       setShowModal(true);
